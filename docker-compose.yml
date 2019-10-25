@@ -1,0 +1,38 @@
+version: '3.5'
+services:
+  web:
+    image: odoo:11
+    container_name: odoo11
+    depends_on:
+      - db
+    ports:
+      - "8070:8069"
+    volumes:
+      - odoo-web-data:/var/lib/odoo
+      - ./config:/etc/odoo
+      - ./addons:/mnt/extra-addons
+#      - ./filestore:/var/lib/odoo/
+#      - ./sessions:/var/lib/odoo/
+    networks:
+      - pgdbnet
+  db:
+    image: postgres:11
+    container_name: postgres11
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=odoo
+      - POSTGRES_USER=odoo
+      - PGDATA=/var/lib/postgresql/data/pgdata
+    volumes:
+      - ./odoo-db-data:/var/lib/postgresql/data/pgdata
+#      - /etc/localtime:/etc/localtime:ro
+#      - /etc/password/:/etc/password:ro
+#    user: 1000:1000
+    networks:
+      - pgdbnet
+volumes:
+  odoo-web-data:
+  odoo-db-data:
+networks:
+  pgdbnet:
+    driver: bridge
